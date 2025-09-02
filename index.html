@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利潤計算機</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eef2f7;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 950px;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .panel {
+            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            min-width: 300px;
+        }
+        .input-panel {
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #dcdcdc;
+            border-radius: 5px;
+            outline: none;
+            transition: opacity .2s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .slider-label-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .disclaimer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #95a5a6;
+        }
+        /* Mobile-first adjustments */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+        }
+        .profit-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-left: 10px;
+        }
+        .rate-display-container {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .rate-display {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #555;
+            margin-top: 5px;
+        }
+        .rate-display span {
+            color: #2c3e50;
+        }
+        .live-rates-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 0.8em;
+            text-align: left;
+        }
+        .rate-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #eef2f7;
+            border-radius: 6px;
+        }
+        .refresh-text {
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+            color: #3498db;
+            user-select: none;
+            text-decoration: underline;
+        }
+        .countdown-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: #666;
+            gap: 10px;
+        }
+        .manual-calc-result {
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2c3e50;
+            background-color: #e2f0e2;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .manual-calc-result span {
+            color: #27ae60;
+        }
+        .calculate-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .calculate-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>利潤計算機</h1>
+    <div class="main-content">
+        <div class="panel input-panel">
+            <h2>利潤規劃</h2>
+            <div class="input-group">
+                <label for="twdAmount">支付的台幣金額 (TWD):</label>
+                <input type="number" id="twdAmount" value="100000" step="1">
+            </div>
+            
+            <div class="input-group">
+                <label for="profitPercentage">
+                    期望的總利潤百分比 (<span id="profitPercentageValue">5</span> %):
+                    <span id="totalProfitTWD" class="profit-display"></span>
+                </label>
+                <input type="range" id="profitPercentage" value="5" min="1" max="20" step="1">
+                <div class="slider-label-container">
+                    <span>1%</span>
+                    <span>20%</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="twdToRmbProfitShare">利潤佔比:</label>
+                <div class="slider-label-container">
+                    <span>台幣-人民幣: <span id="twdToRmbProfitShareValue">50</span>%</span>
+                    <span>美元-人民幣: <span id="usdToRmbProfitShareValue">50</span>%</span>
+                </div>
+                <input type="range" id="twdToRmbProfitShare" value="50" min="0" max="100" step="1">
+                <div class="slider-label-container">
+                    <span class="rate-display"><span id="twdToRmbRate"></span> TWD</span>
+                    <span class="rate-display"><span id="usdToRmbRate"></span> RMB</span>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3 style="font-size: 0.9em;">即時市場匯率</h3>
+                <div class="live-rates-container">
+                    <div class="rate-item">
+                        <span>🇹🇼 對 🇨🇳:</span>
+                        <span id="actualTwdToRmbRate" style="font-weight: bold;">--</span>
+                    </div>
+                    <div class="rate-item">
+                        <span>🇺🇸 對 🇨🇳:</span>
+                        <span id="actualUsdToRmbRate" style="font-weight: bold;">--</span>
+                    </div>
+                    <div class="rate-item">
+                        <span>🇺🇸 對 🇹🇼:</span>
+                        <span id="actualUsdToTwdRate" style="font-weight: bold;">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="countdown-container">
+                <span class="refresh-text" onclick="fetchRates()">更新</span>
+                <span id="countdown"></span>
+            </div>
+        </div>
+        
+        <!-- 新增手動計算面板 -->
+        <div class="panel input-panel">
+            <h2>手動計算</h2>
+            <p>輸入您提供的匯率，計算實際利潤。</p>
+
+            <div class="input-group">
+                <label for="manualTwdToRmbRate">您提供的匯率 (1 人民幣 = ? 台幣):</label>
+                <input type="number" id="manualTwdToRmbRate" value="" step="0.0001">
+            </div>
+
+            <div class="input-group">
+                <label for="manualUsdToRmbRate">您提供的匯率 (1 美元 = ? 人民幣):</label>
+                <input type="number" id="manualUsdToRmbRate" value="" step="0.0001">
+            </div>
+            
+            <button class="calculate-button" onclick="calculateManualProfit()">計算利潤</button>
+
+            <div id="manualCalcResult" class="manual-calc-result" style="display: none;">
+                <p>您的預估總利潤為：<br><span id="manualProfitDisplay"></span></p>
+            </div>
+        </div>
+    </div>
+    <p class="disclaimer">此為簡化計算模型，假設利潤均分，僅供參考，實際交易利潤可能因市場波動、手續費等因素而異。</p>
+</div>
+
+<script>
+    /**
+     * @fileoverview 私人匯兌利潤計算機
+     * 這個腳本會監聽輸入欄位的變動，並即時計算中介商的利潤。
+     */
+
+    let actualTwdToRmbRate = null;
+    let actualUsdToTwdRate = null;
+    let actualUsdToRmbRate = null;
+    let countdownInterval;
+    const updateInterval = 60; // seconds
+
+    /**
+     * 根據輸入的數值計算中介商的利潤。
+     */
+    function calculateResults() {
+        // 確保已經取得即時匯率，否則不進行計算
+        if (actualTwdToRmbRate === null || actualUsdToTwdRate === null || actualUsdToRmbRate === null) {
+            document.getElementById('twdToRmbRate').textContent = "等待匯率...";
+            document.getElementById('usdToRmbRate').textContent = "等待匯率...";
+            document.getElementById('totalProfitTWD').textContent = "等待匯率...";
+            return;
+        }
+        
+        // 獲取輸入值，並將其轉換為浮點數
+        const twdAmount = parseFloat(document.getElementById('twdAmount').value);
+        const profitPercentage = parseFloat(document.getElementById('profitPercentage').value) / 100;
+        const twdToRmbProfitShare = parseFloat(document.getElementById('twdToRmbProfitShare').value) / 100;
+
+        // 更新滑軌數值顯示
+        document.getElementById('profitPercentageValue').textContent = (profitPercentage * 100).toFixed(0);
+        document.getElementById('twdToRmbProfitShareValue').textContent = (twdToRmbProfitShare * 100).toFixed(0);
+        document.getElementById('usdToRmbProfitShareValue').textContent = (100 - (twdToRmbProfitShare * 100)).toFixed(0);
+
+        // 如果輸入不是有效的數字，則停止計算
+        if (isNaN(twdAmount) || isNaN(profitPercentage) || isNaN(twdToRmbProfitShare)) {
+            return;
+        }
+        
+        // 確保利潤佔比在有效範圍內
+        if (twdToRmbProfitShare < 0 || twdToRmbProfitShare > 1) {
+            return;
+        }
+        
+        // 計算總利潤
+        const totalProfitTWD = twdAmount * profitPercentage;
+        
+        // 根據利潤佔比分配利潤
+        const profitTwdToRmb = totalProfitTWD * twdToRmbProfitShare;
+        const profitUsdToRmb = totalProfitTWD * (1 - twdToRmbProfitShare);
+
+        // --- 匯率反推計算 ---
+        
+        // 1. 台幣對人民幣匯率反推
+        const newTwdToRmbRate = (1 + (profitTwdToRmb / twdAmount)) * actualTwdToRmbRate;
+
+        // 2. 美元對人民幣匯率反推
+        const newUsdToRmbRate = (1 + (profitUsdToRmb / twdAmount)) * (actualUsdToRmbRate);
+        
+        // 更新網頁上的匯率顯示，並保留四位小數
+        document.getElementById('twdToRmbRate').textContent = newTwdToRmbRate.toFixed(4);
+        document.getElementById('usdToRmbRate').textContent = newUsdToRmbRate.toFixed(4);
+        document.getElementById('totalProfitTWD').textContent = `${totalProfitTWD.toFixed(2)} TWD`;
+    }
+    
+    /**
+     * 根據手動輸入的匯率計算利潤
+     */
+    function calculateManualProfit() {
+        // 確保已經取得即時匯率
+        if (actualTwdToRmbRate === null || actualUsdToTwdRate === null || actualUsdToRmbRate === null) {
+            const manualResultDisplay = document.getElementById('manualProfitDisplay');
+            if (manualResultDisplay) {
+                manualResultDisplay.textContent = "請先等待匯率載入。";
+                document.getElementById('manualCalcResult').style.display = 'block';
+            }
+            return;
+        }
+        
+        const twdAmount = parseFloat(document.getElementById('twdAmount').value);
+        const manualTwdToRmbRate = parseFloat(document.getElementById('manualTwdToRmbRate').value);
+        const manualUsdToRmbRate = parseFloat(document.getElementById('manualUsdToRmbRate').value);
+        
+        // 驗證輸入
+        if (isNaN(twdAmount) || isNaN(manualTwdToRmbRate) || isNaN(manualUsdToRmbRate)) {
+            const manualResultDisplay = document.getElementById('manualProfitDisplay');
+            if (manualResultDisplay) {
+                manualResultDisplay.textContent = "請輸入有效的數值。";
+                document.getElementById('manualCalcResult').style.display = 'block';
+            }
+            return;
+        }
+        
+        // --- 修正後的邏輯，以確保兩邊計算結果一致 ---
+        // 計算總利潤的基礎：將所有匯率價差加總，並乘以基礎金額
+        
+        const profitFromTwdToRmb = (manualTwdToRmbRate / actualTwdToRmbRate - 1) * twdAmount;
+        const profitFromUsdToRmb = (manualUsdToRmbRate / actualUsdToRmbRate - 1) * twdAmount;
+        
+        const totalProfitTWD = profitFromTwdToRmb + profitFromUsdToRmb;
+        
+        // 顯示結果
+        const manualResultDisplay = document.getElementById('manualProfitDisplay');
+        if (manualResultDisplay) {
+            manualResultDisplay.textContent = `${totalProfitTWD.toFixed(2)} TWD`;
+            document.getElementById('manualCalcResult').style.display = 'block';
+        }
+    }
+    
+    /**
+     * 從 API 獲取即時匯率。
+     */
+    async function fetchRates() {
+        const loadingStatus = document.getElementById('loadingStatus');
+        if (loadingStatus) {
+            loadingStatus.innerHTML = '<p>讀取中...</p>';
+        }
+        
+        try {
+            const response = await fetch('https://open.er-api.com/v6/latest/USD');
+            const data = await response.json();
+
+            if (data.result === 'success') {
+                const rates = data.rates;
+                actualUsdToTwdRate = rates.TWD;
+                actualUsdToRmbRate = rates.CNY; 
+                actualTwdToRmbRate = actualUsdToTwdRate / actualUsdToRmbRate;
+
+                document.getElementById('actualTwdToRmbRate').textContent = actualTwdToRmbRate.toFixed(4);
+                document.getElementById('actualUsdToRmbRate').textContent = actualUsdToRmbRate.toFixed(4);
+                document.getElementById('actualUsdToTwdRate').textContent = actualUsdToTwdRate.toFixed(4);
+                
+                if (loadingStatus) {
+                    loadingStatus.innerHTML = '';
+                }
+
+                calculateResults();
+                startCountdown();
+            } else {
+                if (loadingStatus) {
+                    loadingStatus.innerHTML = `<p style="color:red;">載入匯率失敗，請稍後再試。</p>`;
+                }
+                document.getElementById('actualTwdToRmbRate').textContent = '--';
+                document.getElementById('actualUsdToRmbRate').textContent = '--';
+                document.getElementById('actualUsdToTwdRate').textContent = '--';
+                console.error('Failed to fetch exchange rates:', data.error);
+            }
+        } catch (error) {
+            if (loadingStatus) {
+                loadingStatus.innerHTML = `<p style="color:red;">載入匯率失敗，請稍後再試。</p>`;
+            }
+            document.getElementById('actualTwdToRmbRate').textContent = '--';
+            document.getElementById('actualUsdToRmbRate').textContent = '--';
+            document.getElementById('actualUsdToTwdRate').textContent = '--';
+            console.error('Failed to fetch exchange rates:', error);
+        }
+    }
+    
+    /**
+     * 開始更新倒數計時器。
+     */
+    function startCountdown() {
+        clearInterval(countdownInterval);
+        let seconds = updateInterval;
+        const countdownElement = document.getElementById('countdown');
+        
+        if (countdownElement) {
+            countdownElement.textContent = `下一次更新：${seconds} 秒`;
+        }
+        
+        countdownInterval = setInterval(() => {
+            seconds--;
+            if (seconds > 0) {
+                if (countdownElement) {
+                    countdownElement.textContent = `下一次更新：${seconds} 秒`;
+                }
+            } else {
+                if (countdownElement) {
+                    countdownElement.textContent = `更新中...`;
+                }
+                fetchRates();
+            }
+        }, 1000);
+    }
+
+    // 為所有輸入欄位添加事件監聽器，當值改變時自動觸發計算
+    document.getElementById('twdAmount').addEventListener('input', calculateResults);
+    document.getElementById('profitPercentage').addEventListener('input', calculateResults);
+    document.getElementById('twdToRmbProfitShare').addEventListener('input', calculateResults);
+
+    // 頁面加載完成時，首先獲取匯率
+    window.onload = fetchRates;
+</script>
+
+</body>
+</html>
